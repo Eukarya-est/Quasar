@@ -1,0 +1,26 @@
+2025-07-26 16:16:39,157 [INFO]: [2025-07-26 16:16:39]: Bayesian statistics.md in Practical Statstics already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-26 16:16:39,157 [INFO]: [2025-07-26 16:16:39]: Practical Statstics has been completed. 1 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-26 16:16:39,158 [INFO]: [2025-07-26 16:16:39]: Flask with docker.md in Docker already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-26 16:16:39,158 [INFO]: [2025-07-26 16:16:39]: Docker has been completed. 2 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-26 16:16:39,159 [INFO]: [2025-07-26 16:16:39]: Flask on Windows.md in Flask already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-26 16:16:39,159 [INFO]: [2025-07-26 16:16:39]: Flask has been completed. 3 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-26 16:16:39,161 [INFO]: [2025-07-26 16:16:39]: React with Vite.md in React.js already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-26 16:16:39,161 [INFO]: [2025-07-26 16:16:39]: React.js has been completed. 4 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:14,703 [INFO]: Bayesian statistics.md in Practical Statstics already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:14,703 [INFO]: Practical Statstics has been completed. 1 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:14,705 [INFO]: Flask with docker.md in Docker already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:14,705 [INFO]: Docker has been completed. 2 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:14,706 [INFO]: Flask on Windows.md in Flask already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:14,707 [INFO]: Flask has been completed. 3 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:14,709 [INFO]: React with Vite.md in React.js already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:14,709 [INFO]: React.js has been completed. 4 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:14,709 [INFO]: ===== Markdown has been converted and saved to html ===== in /home/orbit/Stellar-spire/quasar/md_changer.py:60
+2025-07-29 22:36:56,499 [INFO]: Bayesian statistics.md in Practical Statstics already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:56,499 [INFO]: Practical Statstics has been completed. 1 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:56,500 [INFO]: Flask with docker.md in Docker already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:56,500 [INFO]: Docker has been completed. 2 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:56,501 [INFO]: Flask on Windows.md in Flask already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:56,501 [INFO]: Flask has been completed. 3 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:56,503 [INFO]: React with Vite.md in React.js already has been exist 1 / 1 in /home/orbit/Stellar-spire/quasar/md_changer.py:50
+2025-07-29 22:36:56,503 [INFO]: React.js has been completed. 4 / 5 in /home/orbit/Stellar-spire/quasar/md_changer.py:56
+2025-07-29 22:36:56,503 [INFO]: ===== Markdown has been converted and saved to html ===== in /home/orbit/Stellar-spire/quasar/md_changer.py:60
