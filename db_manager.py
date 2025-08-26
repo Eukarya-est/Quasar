@@ -1,8 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
-import time
 
-from properties.db_config import DbConfig
+from properties.db_config import DBconfig
 from logger import debug_logger, info_logger, warning_logger, error_logger
 
 class DBManager:
@@ -16,11 +15,11 @@ class DBManager:
         self.connection = None
         try:
             self.connection = mysql.connector.connect(
-                user=DbConfig.user.value,
-                password=DbConfig.password.value,
-                host=DbConfig.host.value, # name of the mysql service as set in the docker compose file
-                database=DbConfig.database.value,
-                port=DbConfig.port.value,            
+                user=DBconfig.user.value,
+                password=DBconfig.password.value,
+                host=DBconfig.host.value, # name of the mysql service as set in the docker compose file
+                database=DBconfig.database.value,
+                port=DBconfig.port.value,            
             )
             if self.connection.is_connected():
                 info_logger.info("Successfully connected to the database")
@@ -28,11 +27,11 @@ class DBManager:
         except Error as e:
             error_logger.error(f"Error connecting to the database: {e}")
 
-    def select_query(self, query, values):
+    def select_query(self, query, *args):
         """Executes a select query and returns the result."""
         result = None
         try:
-            self.cursor.execute(query, values)
+            self.cursor.execute(query, args)
             result = self.cursor.fetchall()
             info_logger.info("Query executed successfully; select_query")
         except Error as e:
@@ -46,7 +45,7 @@ class DBManager:
         """Executes an insert query."""
         try:
             self.cursor.execute(query, values)
-            self.connection.commit()
+            result = self.connection.commit()
             info_logger.info("Query executed successfully; insert_query")
         except Error as e:
             error_logger.error(f"Error insert_query: {e}")
@@ -54,12 +53,13 @@ class DBManager:
         finally:
             if self.cursor:
                 self.cursor.close()
+        return result
     
     def update_query(self, query, values):
         """Executes an update query."""
         try:
             self.cursor.execute(query, values)
-            self.connection.commit()
+            result = self.connection.commit()
             info_logger.info("Query executed successfully; update_query")
         except Error as e:
             error_logger.error(f"Error update_query: {e}")
@@ -67,6 +67,7 @@ class DBManager:
         finally:
             if self.cursor:
                 self.cursor.close()
+            return result
 
     def close_connection(self):
         """Closes the database connection."""

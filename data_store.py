@@ -2,14 +2,24 @@ class DataStore:
 
     def __init__(self, *args):
         self._cover = args[0]
-        self._created_time = args[1]
-        self._revised_time = args[2]
-        self._title = args[3]
-        self._file_name = args[4]
+        self._num = args[1]
+        self._revision = args[2]
+        self._created_time = args[3]
+        self._revised_time = args[4]
+        self._title = args[5]
+        self._file_name = args[6]
         
     @property
     def cover(self):
         return self._cover
+    
+    @property
+    def number(self):
+        return self._num
+    
+    @property
+    def revision(self):
+        return self._revision
     
     @property
     def created(self):

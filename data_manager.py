@@ -25,10 +25,6 @@ def get_modified_time(file):
 def get_title(filename):
     return filename
 
-def get_label():
-    label = ''
-    return label
-
 def get_file_name(filename):
     file_name = filename + ".html"
     return file_name
