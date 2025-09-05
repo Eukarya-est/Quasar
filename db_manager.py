@@ -21,52 +21,70 @@ class DBManager:
                 database=DBconfig.database.value,
                 port=DBconfig.port.value,            
             )
-            if self.connection.is_connected():
-                info_logger.info("Successfully connected to the database")
-                self.cursor = self.connection.cursor()
         except Error as e:
             error_logger.error(f"Error connecting to the database: {e}")
+            self.connection = None
+        info_logger.info("Successfully connected to the database")
 
-    def select_query(self, query, *args):
-        """Executes a select query and returns the result."""
-        result = None
-        try:
-            self.cursor.execute(query, args)
-            result = self.cursor.fetchall()
-            info_logger.info("Query executed successfully; select_query")
-        except Error as e:
-            error_logger.error(f"Error select_query: {e}")
-        finally:
-            if self.cursor:
-                self.cursor.close()
-        return result
-    
     def insert_query(self, query, values):
         """Executes an insert query."""
+        result = None
+        if not self.connection or not self.connection.is_connected():
+            error_logger.error("No active database connection for insert_query")
+            return result
+        
+        cursor = self.connection.cursor()
+
         try:
-            self.cursor.execute(query, values)
-            result = self.connection.commit()
+            cursor.execute(query, values)
+            self.connection.commit()
+            result = cursor.rowcount
             info_logger.info("Query executed successfully; insert_query")
         except Error as e:
             error_logger.error(f"Error insert_query: {e}")
             self.connection.rollback()
         finally:
-            if self.cursor:
-                self.cursor.close()
-        return result
+            cursor.close()
+            return result
+
+    def select_query(self, query, values):
+        """Executes a select query and returns the result."""
+        result = None
+        if not self.connection or not self.connection.is_connected():
+            error_logger.error("No active database connection for select_query")
+            return result
+        
+        cursor = self.connection.cursor()
+        
+        try:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+            info_logger.info("Query executed successfully; select_query")
+        except Error as e:
+            error_logger.error(f"Error select_query: {e}")
+        finally:
+            cursor.close()
+            return result
     
     def update_query(self, query, values):
         """Executes an update query."""
+        result = None
+        if not self.connection or not self.connection.is_connected():
+            error_logger.error("No active database connection for select_query")
+            return result
+        
+        cursor = self.connection.cursor()
+
         try:
-            self.cursor.execute(query, values)
-            result = self.connection.commit()
+            cursor.execute(query, values)
+            self.connection.commit()
+            result = cursor.rowcount
             info_logger.info("Query executed successfully; update_query")
         except Error as e:
             error_logger.error(f"Error update_query: {e}")
             self.connection.rollback()
         finally:
-            if self.cursor:
-                self.cursor.close()
+            cursor.close()
             return result
 
     def close_connection(self):
