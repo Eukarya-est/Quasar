@@ -34,7 +34,7 @@ class DataStore:
         return self._title
     
     @property
-    def file(self):
+    def file_name(self):
         return self._file_name
 
     

@@ -4,7 +4,7 @@
 
 ### Memo
 1. python3 -m venv .env
-2. source .env/big/activate
+2. source .env/bin/activate
 3. pip install markdown
 
 ## Sequence Diagram
@@ -13,7 +13,7 @@
     loop Every Directory
         activate main
         main->>main: os.listdir(path.MARKDOWN)
-        main->>db_controller: select_all_dir
+        main->>db_controller: select_col_dir
         activate db_controller
         db_controller->>main: result
         deactivate db_controller

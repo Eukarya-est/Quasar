@@ -1,15 +1,61 @@
 import os
 import datetime as time
 
-def get_cover(cover):
+import data_store
+
+def set_file_info_init(file):
+
+    cover = get_cover_init()
+    num = get_num_init()
+    revision = get_revision_init()    
+    created_time = get_created_time(file)
+    revised_time = get_modified_time(file)
+    title = get_title(parse_path(file))
+    file_name = get_file_name(parse_path(file))
+
+    return data_store.DataStore(cover, num, revision, created_time, revised_time, title, file_name)
+
+def get_cover_init():
+    cover = None
     return cover
 
-def get_num():
-    num = ''
+def get_cover(value):
+    cover = value
+    return cover
+
+def get_num_init():
+    num = None
     return num
 
-def get_revision():
-    revision = ''
+def get_num(number):
+    if type(number) == tuple:
+        value = number[0]
+    else:
+        value = number
+
+    if value is None:
+        num = 1
+    else:
+        num = int(value) + 1
+
+    return num
+
+def get_revision_init():
+    revision = None
+    return revision
+
+def get_revision(number):
+
+    if type(number) == tuple:
+        value = number[0]
+    else:
+        value = number
+
+    if value is None:
+        revision = 1
+    else:
+        revision = int(value) + 1
+
     return revision
 
 def get_created_time(file):
@@ -29,6 +75,7 @@ def get_file_name(filename):
     file_name = filename + ".html"
     return file_name
 
-def get_display_flag():
-    display_flag = True
-    return display_flag
+def parse_path(path):
+    list = path.split('/')
+    file_name = list[len(list) - 1]
+    return file_name
