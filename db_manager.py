@@ -30,6 +30,7 @@ class DBManager:
         """Executes an insert query."""
         result = None
         if not self.connection or not self.connection.is_connected():
+            info_logger.info("No active database connection for insert_query")
             error_logger.error("No active database connection for insert_query")
             return result
         
@@ -41,8 +42,10 @@ class DBManager:
             result = cursor.rowcount
             info_logger.info("Query executed successfully; insert_query")
         except Error as e:
+            info_logger.info(f"Error insert_query: {e}")
             error_logger.error(f"Error insert_query: {e}")
             self.connection.rollback()
+            raise e
         finally:
             cursor.close()
             return result
@@ -51,6 +54,7 @@ class DBManager:
         """Executes a select query and returns the result."""
         result = None
         if not self.connection or not self.connection.is_connected():
+            info_logger.info("No active database connection for select_query")
             error_logger.error("No active database connection for select_query")
             return result
         
@@ -61,7 +65,10 @@ class DBManager:
             result = cursor.fetchall()
             info_logger.info("Query executed successfully; select_query")
         except Error as e:
+            info_logger.info(f"Error select_query: {e}")
             error_logger.error(f"Error select_query: {e}")
+            self.connection.rollback()
+            raise e
         finally:
             cursor.close()
             return result
@@ -70,6 +77,7 @@ class DBManager:
         """Executes an update query."""
         result = None
         if not self.connection or not self.connection.is_connected():
+            info_logger.info("No active database connection for select_query")
             error_logger.error("No active database connection for select_query")
             return result
         
@@ -81,8 +89,10 @@ class DBManager:
             result = cursor.rowcount
             info_logger.info("Query executed successfully; update_query")
         except Error as e:
+            info_logger.info(f"Error update_query: {e}")
             error_logger.error(f"Error update_query: {e}")
             self.connection.rollback()
+            raise e
         finally:
             cursor.close()
             return result
@@ -94,6 +104,7 @@ class DBManager:
             self.connection.close()
             info_logger.info("Database connection closed")
         else:
+            info_logger.info("No active database connection to close")
             warning_logger.warning("No active database connection to close")
         self.connection = None
         self.cursor = None
