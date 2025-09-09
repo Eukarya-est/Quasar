@@ -31,7 +31,7 @@
         activate db_manager
         db_manager->>db_controller: result
         deactivate db_manager
-        db_controller->>main: TYPE.VERIFIED
+        db_controller->>main: result
         deactivate db_controller
         main->>v_and_v: validate_dir
         activate v_and_v
@@ -77,6 +77,14 @@
             activate data_manager
             data_manager->>main: data_store
             deactivate data_manager
+            main->>db_controller: select_dir3
+            activate db_controller
+            db_controller->>db_manager: select_query:select_D3
+            activate db_manager
+            db_manager->>db_controller: result
+            deactivate db_manager
+            db_controller->>main: result
+            deactivate db_controller
             main->>v_and_v: validate_file
             activate v_and_v
             v_and_v->>db_controller: select_file
@@ -93,7 +101,7 @@
             activate db_manager
             db_manager->>db_controller: result
             deactivate db_manager
-            db_controller->>v_and_v: revised_time
+            db_controller->>v_and_v: result
             deactivate db_controller
             alt result is None
                 v_and_v->>main: Type.NEW
@@ -118,16 +126,12 @@
                 deactivate db_controller
                 main->>db_controller: select_file_max_rev
                 activate db_controller
-                db_controller->>db_manager: select_query:select_F4
+                db_controller->>db_manager: select_query:select_F5
                 activate db_manager
                 db_manager->>db_controller: result
                 deactivate db_manager
                 db_controller->>main: result
                 deactivate db_controller
-                main->>data_manager: get_cover
-                activate data_manager
-                data_manager->>main: cover
-                deactivate data_manager
                 main->>data_manager: get_num
                 activate data_manager
                 data_manager->>main: num
@@ -165,10 +169,6 @@
                 deactivate db_manager
                 db_controller->>main: result
                 deactivate db_controller
-                main->>data_manager: get_cover
-                activate data_manager
-                data_manager->>main: cover
-                deactivate data_manager
                 main->>data_manager: get_num
                 activate data_manager
                 data_manager->>main: num
@@ -179,7 +179,7 @@
                 deactivate data_manager  
                 main->>db_controller: update_file
                 activate db_controller
-                db_controller->>db_manager: update_query
+                db_controller->>db_manager: update_query:update_F1
                 activate db_manager
                 db_manager->>db_controller: result
                 deactivate db_manager
@@ -187,7 +187,7 @@
                 deactivate db_controller
                 main->>db_controller: insert_new_file
                 activate db_controller
-                db_controller->>db_manager: insert_query
+                db_controller->>db_manager: insert_query:insert_F1
                 activate db_manager
                 db_manager->>db_controller: result
                 deactivate db_manager

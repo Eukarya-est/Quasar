@@ -20,12 +20,13 @@ def main():
     dir_db = db_controller.select_dir1(TABLE.DIR, TYPE.VALID)
 
     for directory in dir_os:
+        info_logger.info(f"[!] Processing directory: {directory}")
 
         # Verify directory
         verified = vv.verify_dir(PATH.MARKDOWN, directory)
+        info_logger.info(f"Directory {directory} verification result: {verified}")
         cd = db_controller.select_dir3(TABLE.DIR, directory)
         valid = TYPE.INVALID
-
 
         # If directory is not verified, remove it from database if it exists
         if not verified:
@@ -43,6 +44,7 @@ def main():
         # If directory is verified, Validate directory
         else:
             valid = vv.validate_dir(TABLE.DIR, PATH.MARKDOWN, directory)
+            info_logger.info(f"Directory {directory} validation result: {valid}")
 
         # If directory is valid, proceed with conversion
         if valid == TYPE.VALID:
@@ -52,12 +54,14 @@ def main():
                 dir_db.remove(directory)
             
             for file in file_list:
+                info_logger.info(f"Processing file: {file} in directory: {directory}")
 
                 # List files up from database (for updating deleted files)
                 file_db = db_controller.select_all_files(TABLE.FILES, cd)
 
                 # Validate file
                 verified = vv.verify_file(f"{PATH.MARKDOWN}/{directory}/{file}")
+                info_logger.info(f"File {file} verification result: {verified}")
 
                 # If file is not verified, Skip it
                 if not verified:
@@ -69,18 +73,20 @@ def main():
                 # If file is verified, proceed to validate it
                 else:
                     store = data_manager.set_file_info_init(f"{PATH.MARKDOWN}/{directory}/{file}")
+                    cd = db_controller.select_dir3(TABLE.DIR, directory)
+                    store._cover = data_manager.get_cover(cd)
                     valid = vv.validate_file(TABLE.FILES, store)
 
                 # If file is not valid, Skip it
                 if not valid:
                     continue
+
                 # If file is valid, proceed with conversion
                 if valid == TYPE.NEW:
                     completed = md_changer.convert_md_to_html(PATH.MARKDOWN, PATH.HTMLS, directory, file)
                     if completed:
                         num = db_controller.select_file_max_num(TABLE.FILES, store.cover)
                         revision = db_controller.select_file_max_rev(TABLE.FILES, store.cover, store.title)
-                        store._cover = data_manager.get_cover(cd)
                         store._num = data_manager.get_num(num)
                         store._revision = data_manager.get_revision(revision)
                         db_controller.insert_new_file(TABLE.FILES, store.cover, store.number, store.revision, store.created, store.revised, store.title, store.title)
@@ -95,7 +101,6 @@ def main():
                     if completed:
                         num = db_controller.select_file_max_num(TABLE.FILES, store.cover)
                         revision = db_controller.select_file_max_rev(TABLE.FILES, store.cover, store.title)
-                        store._cover = data_manager.get_cover(cd)
                         store._num = data_manager.get_num(num)
                         store._revision = data_manager.get_revision(revision)
                         db_controller.update_file(TABLE.FILES, TYPE.INVALID, store.cover, store.title, revision)
@@ -106,7 +111,6 @@ def main():
                         info_logger.info(f"File {file} in directory {directory} could not be converted.")
                         error_logger.error(f"Failed to convert {file} in {directory} to HTML")
                         continue
-                # If file is not valid , Skip it
                 else:
                     continue
 
@@ -117,15 +121,12 @@ def finish_off():
     """Finish off file number."""
 
     dir_db = db_controller.select_dir1(TABLE.DIR, TYPE.VALID)
-
     if dir_db is None or len(dir_db) == 0:
         info_logger.info("No valid directory found in the database")
         warning_logger.warning("No valid directory found in the database")
         return
     else:
-
         for directory in dir_db:
-
             if type(directory) == tuple:
                 directory = directory[0]
 

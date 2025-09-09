@@ -32,7 +32,6 @@ def validate_dir(db_table, path, directory):
     """
 
     # Verify the directory on database
-
     file_list = os.listdir(f"{path}/{directory}")
 
     # Check if the directory is already in the database
@@ -112,7 +111,6 @@ def verify_file(file):
     
     # Check if the file is a directory
     if os.path.isdir(file):
-        debug_logger.debug(f"{file} is a directory")
         info_logger.error(f"{file} is a directory")
         warning_logger.warning(f"{file} is a directory")
         return TYPE.UNVERIFIED
@@ -127,6 +125,7 @@ def validate_file(db_table, file_info):
 
     # Verify the file on database
     try:
+        debug_logger.debug(f"{file_info.cover}, {file_info.title}")
         result = db_controller.select_file(db_table, file_info.cover, file_info.title)
         revised_time = db_controller.select_file_revised(db_table, file_info.cover, file_info.title)
     except Exception as e:

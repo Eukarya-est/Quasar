@@ -25,7 +25,7 @@ def main():
     dir_db = db_controller.select_dir1(TABLE.DIR_TEST, TYPE.VALID)
 
     for directory in dir_os:
-        info_logger.info(f"Processing directory: {directory}")
+        info_logger.info(f"[!] Processing directory: {directory}")
 
         # Verify directory
         verified = vv.verify_dir(PATH.TEST_CASE, directory)
@@ -68,37 +68,38 @@ def main():
                 verified = vv.verify_file(f"{PATH.TEST_CASE}/{directory}/{file}")
                 info_logger.info(f"File {file} verification result: {verified}")
 
-                # If file is not valid, Skip it
+                # If file is not verified, Skip it
                 if not verified:
                     info_logger.info(f"File {file} in directory {directory} has been removed from the filesystem. Updating database if file data exist.")
                     revision = db_controller.select_file_max_rev(TABLE.FILES_TEST, directory, data_manager.parse_path(file))
                     if revision is not None:
                         db_controller.update_file(TABLE.FILES_TEST, TYPE.INVALID, directory, file, revision)
                     continue
-                # If file is valid, proceed to validate it
+                # If file is verified, proceed to validate it
                 else:
                     store = data_manager.set_file_info_init(f"{PATH.TEST_CASE}/{directory}/{file}")
+                    cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
+                    store._cover = data_manager.get_cover(cd)
                     valid = vv.validate_file(TABLE.FILES_TEST, store)
-                    info_logger.info(f"File {file} validation result: {valid}")
+                    debug_logger.debug(f"File {file} validation result: {valid}")
 
                 # If file is not valid, Skip it
                 if not valid:
                     continue
 
-                cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
                 # If file is valid, proceed with conversion
                 if valid == TYPE.NEW:
                     completed = md_changer.convert_md_to_html(PATH.TEST_CASE, PATH.TEST_OBJ, directory, store.title)
                     if completed:
                         num = db_controller.select_file_max_num(TABLE.FILES_TEST, store.cover)
                         revision = db_controller.select_file_max_rev(TABLE.FILES_TEST, store.cover, store.title)
-                        store._cover = data_manager.get_cover(cd)
                         store._num = data_manager.get_num(num)
                         store._revision = data_manager.get_revision(revision)
                         db_controller.insert_new_file(TABLE.FILES_TEST, store.cover, store.number, store.revision, store.created, store.revised, store.title, store.title)
                         if file_db is not None and file in file_db:
                             file_db.remove(file)
                     else:
+                        info_logger.info(f"File {file} in directory {directory} could not be converted.")
                         error_logger.error(f"Failed to convert {file} in {directory} to HTML")
                         continue
                 elif valid == TYPE.UPDATE:
@@ -106,17 +107,16 @@ def main():
                     if completed:
                         num = db_controller.select_file_max_num(TABLE.FILES_TEST, store.cover)
                         revision = db_controller.select_file_max_rev(TABLE.FILES_TEST, store.cover, store.title)
-                        store._cover = data_manager.get_cover(cd)
                         store._num = data_manager.get_num(num)
                         store._revision = data_manager.get_revision(revision)
                         db_controller.update_file(TABLE.FILES_TEST, TYPE.INVALID, store.cover, store.title, revision)
                         db_controller.insert_new_file(TABLE.FILES_TEST, store.cover, store.number, store.revision, store.created, store.revised, store.title, store.title)
-                        if(file_db is not None and file in file_db):
+                        if file_db is not None and file in file_db:
                             file_db.remove(file)
                     else:
+                        info_logger.info(f"File {file} in directory {directory} could not be converted.")
                         error_logger.error(f"Failed to convert {file} in {directory} to HTML")
                         continue
-                # If file is not valid , Skip it
                 else:
                     continue
 
@@ -131,14 +131,11 @@ def finish_off():
         info_logger.info("No valid directory found in the database")
         warning_logger.warning("No valid directory found in the database")
         return
-    
     else:
-        
         for directory in dir_db:
-
             if type(directory) == tuple:
                 directory = directory[0]
-                
+
             file_list = os.listdir(f"{PATH.TEST_CASE}/{directory}")
 
             file_count = 1

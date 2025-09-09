@@ -344,8 +344,8 @@ def finish_off_numbering(table, *args):
         if result == 1:
             info_logger.info("numbering finish off executed successfully")
         else:
-            info_logger.info(f"finish_off_numbering is anomaly; result: {result} args: {args}")
-            warning_logger.warning(f"finish_off_numbering is anomaly; result: {result} args: {args}")
+            info_logger.info(f"finish_off_numbering is anomaly; result: {result} | args: {args}")
+            warning_logger.warning(f"finish_off_numbering is anomaly; result: {result} | args: {args}")
         return handling_result(result)
     except Exception as e:
         info_logger.info(f"Exception occurred during finish_off_numbering: {e}")
