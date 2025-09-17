@@ -39,10 +39,10 @@ def convert(mdtex, extensions=[], splitParagraphs=True):
     ''' converts recursively the Markdown-LaTeX-mixture to HTML with MathML '''
     found = False
     # render table of contents before splitting it up:
-    if 'toc' in extensions and splitParagraphs and '[toc]' in mdtex:
+    if 'toc' in extensions and splitParagraphs and '[TOC]' in mdtex:
         md = Markdown(extensions=['toc'])
         md.convert(mdtex)
-        mdtex = mdtex.replace('[toc]', md.toc)
+        mdtex = mdtex.replace('[TOC]', md.toc)
     # entirely skip code-blocks:
     parts = re.split('```', mdtex, 2)
     if len(parts)>1:
