@@ -21,6 +21,7 @@ def insert_dir(table, *args):
         info_logger.info("Database connection is not established")
         error_logger.error("Database connection is not established")
         return None
+    
     try:
         result = DB.insert_query(SqlQuery.insert_D1.format(table), args)
         if result == 1:

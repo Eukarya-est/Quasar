@@ -71,7 +71,7 @@ def test_select_dir3():
 def test_select_dir4():
     try: 
         directory = "TEST DIR 20250903224106"
-        result = db_controller.select_dir3(TABLE.DIR_TEST, directory)
+        result = db_controller.select_dir4(TABLE.DIR_TEST, directory)
         debug_logger.debug(result)
 
         assert result is not None

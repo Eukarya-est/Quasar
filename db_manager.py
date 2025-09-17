@@ -96,6 +96,26 @@ class DBManager:
         finally:
             cursor.close()
             return result
+        
+    def init_table(self, query):
+        result = None
+        if not self.connection or not self.connection.is_connected():
+            info_logger.info("No active database connection for select_query")
+            error_logger.error("No active database connection for select_query")
+            return result
+        
+        cursor = self.connection.cursor()
+
+        try:
+            cursor.execute(query)
+            self.connection.commit()
+            result = cursor.rowcount
+            info_logger.info("Query executed successfully; update_query")
+        except Error as e:
+            info_logger.info(f"Error update_query: {e}")
+            error_logger.error(f"Error update_query: {e}")
+            self.connection.rollback()
+            raise e
 
     def close_connection(self):
         """Closes the database connection."""

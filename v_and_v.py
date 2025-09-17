@@ -125,7 +125,6 @@ def validate_file(db_table, file_info):
 
     # Verify the file on database
     try:
-        debug_logger.debug(f"{file_info.cover}, {file_info.title}")
         result = db_controller.select_file(db_table, file_info.cover, file_info.title)
         revised_time = db_controller.select_file_revised(db_table, file_info.cover, file_info.title)
     except Exception as e:
