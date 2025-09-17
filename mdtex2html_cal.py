@@ -32,6 +32,8 @@ from markdown import markdown as md2html
 from markdown import Markdown
 import re, random, string
 
+from logger import debug_logger
+
 incomplete = '<font style="color:orange;" class="tooltip">&#9888;<span class="tooltiptext">formula incomplete</span></font>'
 convError = '<font style="color:red" class="tooltip">&#9888;<span class="tooltiptext">LaTeX-convert-error</span></font>'
 
@@ -39,10 +41,10 @@ def convert(mdtex, extensions=[], splitParagraphs=True):
     ''' converts recursively the Markdown-LaTeX-mixture to HTML with MathML '''
     found = False
     # render table of contents before splitting it up:
-    if 'toc' in extensions and splitParagraphs and '[TOC]' in mdtex:
+    if 'toc' in extensions and splitParagraphs and '[toc]' in mdtex:
         md = Markdown(extensions=['toc'])
         md.convert(mdtex)
-        mdtex = mdtex.replace('[TOC]', md.toc)
+        mdtex = mdtex.replace('[toc]', md.toc)
     # entirely skip code-blocks:
     parts = re.split('```', mdtex, 2)
     if len(parts)>1:
@@ -75,6 +77,7 @@ def convert(mdtex, extensions=[], splitParagraphs=True):
     # find first $$-formula:
     else:
         parts = re.split('\${2}', mdtex, 2)
+        debug_logger.debug(parts)
     if len(parts)>1 and not found:
         found = True
         result = convert(parts[0], extensions, splitParagraphs=False)+'\n'
