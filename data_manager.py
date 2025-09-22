@@ -28,15 +28,11 @@ def get_num_init():
     return num
 
 def get_num(number):
-    if type(number) == tuple:
-        value = number[0]
-    else:
-        value = number
-
-    if value is None:
+    
+    if number is None:
         num = 1
     else:
-        num = int(value) + 1
+        num = int(number) + 1
 
     return num
 
@@ -46,15 +42,10 @@ def get_revision_init():
 
 def get_revision(number):
 
-    if type(number) == tuple:
-        value = number[0]
-    else:
-        value = number
-
-    if value is None:
+    if number is None:
         revision = 1
     else:
-        revision = int(value) + 1
+        revision = int(number) + 1
 
     return revision
 
@@ -78,4 +69,5 @@ def get_file_name(filename):
 def parse_path(path):
     list = path.split('/')
     file_name = list[len(list) - 1]
-    return file_name
+    name = file_name.split('.')[0]
+    return name

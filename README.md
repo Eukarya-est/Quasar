@@ -14,21 +14,33 @@ Jul.2025 -
  sequenceDiagram
     loop Every Directory
         activate main
-        main->>main: os.listdir(path.MARKDOWN)
-        main->>db_controller: select_col_dir
+        main->>main: os.listdir(PATH.MARKDOWN)
+        main->>db_controller: select_dir1
         activate db_controller
+        db_controller->>db_manager: select_query:select_D1
+        activate db_manager
+        db_manager->>db_controller: result
+        deactivate db_manager
         db_controller->>main: result
         deactivate db_controller
         main->>v_and_v: verify_dir
         activate v_and_v
         v_and_v->>main: TYPE.VERIFIED
         deactivate v_and_v
+        main->>db_controller: select_dir3
+        activate db_controller
+        db_controller->>db_manager:select_query:select_D3
+        activate db_manager
+        db_manager->>db_controller: result
+        deactivate db_manager
+        db_controller->>main: result
+        deactivate db_controller
         main->>v_and_v: validate_dir
         activate v_and_v
-        v_and_v->>v_and_v: os.listdir(path.MARKDOWN/directory)
-        v_and_v->>db_controller: select_dir
+        v_and_v->>v_and_v: os.listdir(PATH.MARKDOWN/directory)
+        v_and_v->>db_controller: select_dir2
         activate db_controller
-        db_controller->>db_manager: select_query
+        db_controller->>db_manager: select_query:select_D2
         activate db_manager
         db_manager->>db_controller: result
         deactivate db_manager
@@ -38,7 +50,7 @@ Jul.2025 -
         alt result is None
             v_and_v->>db_controller: insert_dir
             activate db_controller
-            db_controller->>db_manager: insert_query
+            db_controller->>db_manager: insert_query:insert_D1
             activate db_manager
             db_manager->>db_controller: result
             deactivate db_manager
@@ -49,29 +61,45 @@ Jul.2025 -
             v_and_v->>main: TYPE.VALID
             deactivate v_and_v
         end
-        main->>main: os.listdir(path.MARKDOWN/directory)
+        main->>main: os.listdir(PATH.MARKDOWN/directory)
         loop Every File
         	main->>db_controller: select_all_files
         	activate db_controller
+        	db_controller->>db_manager: select_query:select_F1
+            activate db_manager
+            db_manager->>db_controller: result
+            deactivate db_manager
         	db_controller->>main: result
         	deactivate db_controller
             main->>v_and_v: verify_file
             activate v_and_v
             v_and_v->>main: TYPE.VERIFIED
             deactivate v_and_v
-            main->>data_pipe: set_file_info
-            activate data_pipe
-            data_pipe->>data_manager: GET
+            main->>data_manager: set_file_info_init
             activate data_manager
-            data_manager->>data_pipe: SET
+            data_manager->>main: data_store
             deactivate data_manager
-            data_pipe->>main: data_store
-            deactivate data_pipe
-            main->>v_and_v: valid_file
+            main->>db_controller: select_dir3
+            activate db_controller
+            db_controller->>db_manager: select_query:select_D3
+            activate db_manager
+            db_manager->>db_controller: result
+            deactivate db_manager
+            db_controller->>main: result
+            deactivate db_controller
+            main->>v_and_v: validate_file
             activate v_and_v
             v_and_v->>db_controller: select_file
             activate db_controller
-            db_controller->>db_manager: select_query
+            db_controller->>db_manager: select_query:select_F2
+            activate db_manager
+            db_manager->>db_controller: result
+            deactivate db_manager
+            db_controller->>v_and_v: result
+            deactivate db_controller
+            v_and_v->>db_controller: select_file_revised
+            activate db_controller
+            db_controller->>db_manager: select_query:select_F3
             activate db_manager
             db_manager->>db_controller: result
             deactivate db_manager
@@ -83,13 +111,37 @@ Jul.2025 -
                 v_and_v->>main: Type.UPDATE
             else
                 v_and_v->>main: Type.NOACTION
-                deactivate v_and_v
+            deactivate v_and_v
             end
             alt valid_id == Type.NEW
                 main->>md_changer: convert_md_to_html
                 activate md_changer
                 md_changer->>main: TYPE.SUCCESS
                 deactivate md_changer
+                main->>db_controller: select_file_max_num
+                activate db_controller
+                db_controller->>db_manager: select_query:select_F4
+                activate db_manager
+                db_manager->>db_controller: result
+                deactivate db_manager
+                db_controller->>main: result
+                deactivate db_controller
+                main->>db_controller: select_file_max_rev
+                activate db_controller
+                db_controller->>db_manager: select_query:select_F5
+                activate db_manager
+                db_manager->>db_controller: result
+                deactivate db_manager
+                db_controller->>main: result
+                deactivate db_controller
+                main->>data_manager: get_num
+                activate data_manager
+                data_manager->>main: num
+                deactivate data_manager
+                main->>data_manager: get_revision
+                activate data_manager
+                data_manager->>main: revision
+                deactivate data_manager  
                 main->>db_controller: insert_new_file
                 activate db_controller
                 db_controller->>db_manager: insert_query
@@ -103,13 +155,45 @@ Jul.2025 -
                 activate md_changer
                 md_changer->>main: TYPE.SUCCESS
                 deactivate md_changer
+                main->>db_controller: select_file_max_num
+                activate db_controller
+                db_controller->>db_manager: select_query:select_F4
+                activate db_manager
+                db_manager->>db_controller: result
+                deactivate db_manager
+                db_controller->>main: result
+                deactivate db_controller
+                main->>db_controller: select_file_max_rev
+                activate db_controller
+                db_controller->>db_manager: select_query:select_F5
+                activate db_manager
+                db_manager->>db_controller: result
+                deactivate db_manager
+                db_controller->>main: result
+                deactivate db_controller
+                main->>data_manager: get_num
+                activate data_manager
+                data_manager->>main: num
+                deactivate data_manager
+                main->>data_manager: get_revision
+                activate data_manager
+                data_manager->>main: revision
+                deactivate data_manager  
                 main->>db_controller: update_file
                 activate db_controller
-                db_controller->>db_manager: update_query
+                db_controller->>db_manager: update_query:update_F1
                 activate db_manager
-                db_manager->>db_controller: ?
+                db_manager->>db_controller: result
                 deactivate db_manager
-                db_controller->>main: ?
+                db_controller->>main: result
+                deactivate db_controller
+                main->>db_controller: insert_new_file
+                activate db_controller
+                db_controller->>db_manager: insert_query:insert_F1
+                activate db_manager
+                db_manager->>db_controller: result
+                deactivate db_manager
+                db_controller->>main: result
                 deactivate db_controller
             end
         end

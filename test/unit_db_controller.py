@@ -28,9 +28,9 @@ def test_insert_dir():
         print("Test Error")
         error_logger.error(e)
 
-def test_select_col_dir():
+def test_select_dir1():
     try:
-        result = db_controller.select_col_dir(TABLE.DIR_TEST, TYPE.VALID)
+        result = db_controller.select_dir1(TABLE.DIR_TEST, TYPE.VALID)
         debug_logger.debug(result)
 
         assert result is not None
@@ -41,22 +41,9 @@ def test_select_col_dir():
         print("Test Error")
         error_logger.error(e)
 
-def test_select_row_dir():
+def test_select_dir2():
     try:
-        result = db_controller.select_row_dir(TABLE.DIR_TEST, "test_directory")
-        debug_logger.debug(result)
-        
-        assert result is not None
-        print("Test Passed")
-    except AssertionError:
-        print("Test Failed")
-    except Exception as e:
-        print("Test Error")
-        error_logger.error(e)
-
-def test_select_row_dir2():
-    try:
-        result = db_controller.select_row_dir2(TABLE.DIR_TEST, "test_directory")
+        result = db_controller.select_dir2(TABLE.DIR_TEST, "test_directory")
         debug_logger.debug(result)
 
         assert result is not None
@@ -67,10 +54,24 @@ def test_select_row_dir2():
         print("Test Error")
         error_logger.error(e)
 
-def test_select_row_dir3():
+def test_select_dir3():
     try: 
         directory = "TEST DIR 20250903224106"
-        result = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+        result = db_controller.select_dir3(TABLE.DIR_TEST, directory)
+        debug_logger.debug(result)
+
+        assert result is not None
+        print("Test Passed")
+    except AssertionError:
+        print("Test Failed")
+    except Exception as e:
+        print("Test Error")
+        error_logger.error(e)
+
+def test_select_dir4():
+    try: 
+        directory = "TEST DIR 20250903224106"
+        result = db_controller.select_dir4(TABLE.DIR_TEST, directory)
         debug_logger.debug(result)
 
         assert result is not None
@@ -84,7 +85,7 @@ def test_select_row_dir3():
 def test_update_dir():
     try: 
         directory = "TEST DIR 20250903224106"
-        case = db_controller.select_row_dir2(TABLE.DIR_TEST, directory)
+        case = db_controller.select_dir4(TABLE.DIR_TEST, directory)
         debug_logger.debug(case)
         if(case == TYPE.INVALID):
             result = db_controller.update_dir(TABLE.DIR_TEST, TYPE.VALID, directory)
@@ -110,7 +111,7 @@ def test_insert_file():
         debug_logger.debug(file_list)
         for file in file_list:
             store = data_manager.set_file_info_init(f"{path}/{file}")
-            cover = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+            cover = db_controller.select_dir3(TABLE.DIR_TEST, directory)
             num = db_controller.select_file_max_num(TABLE.FILES_TEST, directory)
             revision = db_controller.select_file_max_rev(TABLE.FILES_TEST, directory, file)
             debug_logger.debug(cover)
@@ -136,7 +137,7 @@ def test_insert_file():
 def test_select_all_files():
     try:
         directory = "TEST DIR 20250904080517"
-        cd = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
         debug_logger.debug(cd)
         result = db_controller.select_all_files(TABLE.FILES_TEST, cd)
         debug_logger.debug(result)
@@ -153,9 +154,25 @@ def test_select_file():
     try:
         directory = "TEST DIR 20250904080517"
         file = "valid_2.md"
-        cd = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
         debug_logger.debug(cd)
-        result = db_controller.select_file(TABLE.FILES_TEST, cd, file)
+        result = db_controller.select_file(TABLE.FILES_TEST, cd, data_manager.parse_path(file))
+        debug_logger.debug(result)
+
+        assert result is not None
+        print("Test Passed")
+    except AssertionError:
+        print("Test Failed")
+    except Exception as e:
+        print("Test Error")
+        error_logger.error(e)
+
+def test_select_file_revised():
+    try:
+        directory = "TEST DIR 20250904080517"
+        file = "valid_2.md"
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
+        result = db_controller.select_file_revised(TABLE.FILES_TEST, cd, data_manager.parse_path(file))
         debug_logger.debug(result)
 
         assert result is not None
@@ -169,7 +186,7 @@ def test_select_file():
 def test_select_file_max_num():
     try:
         directory = "TEST DIR 20250904080517"
-        cd = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
         debug_logger.debug(cd)
         result = db_controller.select_file_max_num(TABLE.FILES_TEST, cd)
         debug_logger.debug(result)
@@ -186,9 +203,28 @@ def test_select_file_max_rev():
     try:
         directory = "TEST DIR 20250904080517"
         file = "valid_2.md"
-        cd = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
         debug_logger.debug(cd)
-        result = db_controller.select_file_max_rev(TABLE.FILES_TEST, cd, file)
+        result = db_controller.select_file_max_rev(TABLE.FILES_TEST, cd, data_manager.parse_path(file))
+        debug_logger.debug(result)
+
+        assert result is not None
+        print("Test Passed")
+    except AssertionError:
+        print("Test Failed")
+    except Exception as e:
+        print("Test Error")
+        error_logger.error(e)
+
+def test_select_file_flag():
+    try:
+        directory = "TEST DIR 20250904080517"
+        file = "valid_2.md"
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
+        debug_logger.debug(cd)
+        revision = db_controller.select_file_max_rev(TABLE.FILES_TEST, cd, data_manager.parse_path(file))
+        debug_logger.debug(revision)
+        result = db_controller.select_file_flag(TABLE.FILES_TEST, cd, data_manager.parse_path(file), revision)
         debug_logger.debug(result)
 
         assert result is not None
@@ -203,14 +239,17 @@ def test_update_file():
     try:
         directory = "TEST DIR 20250904080517"
         file = "valid_2.md"
-        cd = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+        title = data_manager.parse_path(file)
+        revision = 2
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
         debug_logger.debug(cd)
-        case = db_controller.select_file(TABLE.FILES_TEST, cd, file)
+        debug_logger.debug(revision)
+        case = db_controller.select_file_flag(TABLE.FILES_TEST, cd, title, revision)
         debug_logger.debug(case)
         if(case == TYPE.INVALID):
-            result = db_controller.update_file(TABLE.FILES_TEST, TYPE.VALID, cd, file)
+            result = db_controller.update_file(TABLE.FILES_TEST, TYPE.VALID, cd, title, revision)
         else:
-            result = db_controller.update_file(TABLE.FILES_TEST, TYPE.INVALID, cd, file)
+            result = db_controller.update_file(TABLE.FILES_TEST, TYPE.INVALID, cd, title, revision)
         debug_logger.debug(result)
 
         assert result == 1
@@ -225,10 +264,11 @@ def test_finish_off_numbering():
     try:
         directory = "TEST DIR 20250904080517"
         file = "valid_2.md"
-        num = 2
-        cd = db_controller.select_row_dir3(TABLE.DIR_TEST, directory)
+        title = data_manager.parse_path(file)
+        num = 1
+        cd = db_controller.select_dir3(TABLE.DIR_TEST, directory)
         debug_logger.debug(cd)
-        result = db_controller.finish_off_numbering(TABLE.FILES_TEST, num, cd, file)
+        result = db_controller.finish_off_numbering(TABLE.FILES_TEST, num, cd, title)
         debug_logger.debug(result)
 
         assert result == 1

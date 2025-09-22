@@ -2,7 +2,6 @@ import os
 
 import properties.validation_type as TYPE
 import properties.path as PATH
-import properties.db_table as TABLE
 import db_controller
 from logger import debug_logger, info_logger, warning_logger, error_logger
 
@@ -15,30 +14,31 @@ def verify_dir(path, directory):
     # Check if the directory is '.git' directory
     if directory == PATH.GIT:
         info_logger.info(f"{directory} is a git directory, skipping")
+        warning_logger.warning(f"{directory} is a git directory, skipping")
         return TYPE.UNVERIFIED
     
     # Check if the 'directory' is a directory
     if not os.path.isdir(f"{path}/{directory}"):
-        error_logger.error(f"{directory} is not a directory")
+        info_logger.error(f"{directory} is not a directory")
+        warning_logger.warning(f"{directory} is not a directory")
         return TYPE.UNVERIFIED
     
     return TYPE.VERIFIED
 
-def validate_dir(path, directory):
+def validate_dir(db_table, path, directory):
 
     """
     Validate the directory and return True if files exist, False other wise.
     """
 
     # Verify the directory on database
-
     file_list = os.listdir(f"{path}/{directory}")
 
     # Check if the directory is already in the database
     try:
-        result = db_controller.select_row_dir(TABLE.DIR, directory)
+        result = db_controller.select_dir2(db_table, directory)
     except Exception as e:
-        error_logger.error(f"db_controller.select_row_dir failed: {e}")
+        error_logger.error(f"db_controller.select_dir2 failed: {e}")
         return TYPE.INVALID
 
     # Check if the directory is empty
@@ -49,7 +49,7 @@ def validate_dir(path, directory):
     elif len(file_list) == 0 and result is not None:
         info_logger.info(f"{directory} is empty")
         warning_logger.warning(f"{directory} is empty")
-        db_controller.update_dir(TABLE.DIR, TYPE.INVALID, directory)
+        db_controller.update_dir(db_table, TYPE.INVALID, directory)
         return TYPE.INVALID
     # Verify files in the directory on these cases
     # 1. file_list > 0 && result is None 
@@ -59,18 +59,18 @@ def validate_dir(path, directory):
         file_verified = False
         for file in file_list:
             
-            file_verified = verify_file(file)
+            file_verified = verify_file(f"{path}/{directory}/{file}")
             if file_verified:
                 break; 
 
-        if not file_verified:
+        if file_verified == TYPE.UNVERIFIED:
             info_logger.info(f"{directory} does not contain valid markdown files")
             warning_logger.warning(f"{directory} does not contain valid markdown files")
             # If the directory is not valid, remove it from the database
             if result is not None:
                 info_logger.info(f"Removing {directory} from the database")
                 warning_logger.warning(f"Removing {directory} from the database")
-                db_controller.update_dir(TABLE.DIR, TYPE.INVALID, directory)
+                db_controller.update_dir(db_table, TYPE.INVALID, directory)
                 return TYPE.INVALID
             else:
                 info_logger.info(f"{directory} is not valid and not in the database")
@@ -82,7 +82,7 @@ def validate_dir(path, directory):
         if result is None:
             info_logger.info(f"NEW directory:{directory}")
             try:
-                db_controller.insert_dir(TABLE.DIR, TYPE.VALID, directory)
+                db_controller.insert_dir(db_table, directory, TYPE.VALID)
                 return TYPE.VALID
             except Exception as e:
                 error_logger.error(f"db_controller.insert_dir failed: {e}")
@@ -99,17 +99,31 @@ def verify_file(file):
 
     # Check if the file is a valid file
     if not os.path.isfile(file):
-        error_logger.error(f"{file} is not a file")
+        info_logger.error(f"{file} is not a file")
+        warning_logger.warning(f"{file} is not a file")
         return TYPE.UNVERIFIED
     
+    # # Check if the file is a markdown file
+    # if not file.endswith('.md'):
+    #     info_logger.error(f"{file} is not a markdown file")
+    #     warning_logger.warning(f"{file} is not a markdown file")
+    #     return TYPE.UNVERIFIED
+    
     # Check if the file is a markdown file
-    if not file.endswith('.md'):
-        error_logger.error(f"{file} is not a markdown file")
+    if not file.endswith('.html'):
+        info_logger.error(f"{file} is not a html file")
+        warning_logger.warning(f"{file} is not a html file")
+        return TYPE.UNVERIFIED
+
+    # Check if the file is a directory
+    if os.path.isdir(file):
+        info_logger.error(f"{file} is a directory")
+        warning_logger.warning(f"{file} is a directory")
         return TYPE.UNVERIFIED
     
     return TYPE.VERIFIED
 
-def validate_file(file):
+def validate_file(db_table, file_info):
 
     """
     Validate the file and return True if file is valid, False other wise.
@@ -117,19 +131,21 @@ def validate_file(file):
 
     # Verify the file on database
     try:
-        result = db_controller.select_file(TABLE.FILES, file.cover, file.title)
+        result = db_controller.select_file(db_table, file_info.cover, file_info.title)
+        revised_time = db_controller.select_file_revised(db_table, file_info.cover, file_info.title)
     except Exception as e:
+        info_logger.info(f"db_controller.select_file failed: {e}")
         error_logger.error(f"db_controller.select_file failed: {e}")
         return TYPE.INVALID
     
     # Check if the file is already in the database
     if result is None:
-        info_logger.info(f"NEW file: {file}")
+        info_logger.info(f"NEW file: {file_info.title}")
         return TYPE.NEW
     else:
-        if result.revised_time != file.revised:
-            info_logger.info(f"{file} is already in the database and up to date")
+        if str(revised_time) != str(file_info.revised):
+            info_logger.info(f"{file_info.title} is already in the database and up to date")
             return TYPE.UPDATE
         else:
-            info_logger.info(f"{file} is already in the database but not up to date")
+            info_logger.info(f"{file_info.title} is already in the database but not up to date")
             return TYPE.NOACTION
