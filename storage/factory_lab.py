@@ -7,7 +7,7 @@ from logger import debug_logger, info_logger, warning_logger, error_logger
 import mdtex2html
 import markdown
 
-def convert_md_to_html(md_path, html_path, directory, title):
+def process(md_path, html_path, directory, title):
     """
     Convert a markdown file to HTML and save it to the HTML directory.
     """

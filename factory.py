@@ -4,30 +4,30 @@ import properties.validation_type as TYPE
 import properties.path as PATH
 import properties.db_table as TABLE
 from logger import debug_logger, info_logger, warning_logger, error_logger
-import mdtex2html_cal as mdtex2html
+import machine_controller
 
-def convert_md_to_html(md_path, html_path, directory, title):
+def process(md_path, html_path, directory, title):
     """
     Convert a markdown file to HTML and save it to the HTML directory.
     """
 
     try:
         # Read Markdown from file
-        with open(f"{md_path}/{directory}/{title}.md", "r", encoding="utf-8") as md_file:
-            markdown_content = md_file.read()
+        with open(f"{md_path}/{directory}/{title}.html", "r", encoding="utf-8") as read_file:
+            contents = read_file.read()
     except Exception as e:
         info_logger.info(f"File {title} not found in directory {directory}: {e}")
         error_logger.error(f"File {title} not found in directory {directory}: {e}")
         return TYPE.ERROR
     
     # Convert Markdown and LaTeX to HTML
-    inter_content = mdtex2html.convert(markdown_content, ['toc'])
+    final_content = machine_controller.operate(directory, contents)
 
     try:
         if not os.path.isdir(f"{html_path}/{directory}"):
             os.mkdir(f"{html_path}/{directory}")
-        with open(f"{html_path}/{directory}/{title}.html", "w", encoding="utf-8", errors="xmlcharrefreplace") as inter_file:
-            inter_file.write(inter_content)  
+        with open(f"{html_path}/{directory}/{title}.html", "w", encoding="utf-8", errors="xmlcharrefreplace") as write_file:
+            write_file.write(final_content)  
     except Exception as e:
         info_logger.info(f"Error converting Markdown in {title} in directory {directory}: {e}")
         error_logger.error(f"Error converting Markdown in {title} in directory {directory}: {e}")

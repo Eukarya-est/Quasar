@@ -103,12 +103,18 @@ def verify_file(file):
         warning_logger.warning(f"{file} is not a file")
         return TYPE.UNVERIFIED
     
-    # Check if the file is a markdown file
-    if not file.endswith('.md'):
-        info_logger.error(f"{file} is not a markdown file")
-        warning_logger.warning(f"{file} is not a markdown file")
-        return TYPE.UNVERIFIED
+    # # Check if the file is a markdown file
+    # if not file.endswith('.md'):
+    #     info_logger.error(f"{file} is not a markdown file")
+    #     warning_logger.warning(f"{file} is not a markdown file")
+    #     return TYPE.UNVERIFIED
     
+    # Check if the file is a markdown file
+    if not file.endswith('.html'):
+        info_logger.error(f"{file} is not a html file")
+        warning_logger.warning(f"{file} is not a html file")
+        return TYPE.UNVERIFIED
+
     # Check if the file is a directory
     if os.path.isdir(file):
         info_logger.error(f"{file} is a directory")

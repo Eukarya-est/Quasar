@@ -7,7 +7,7 @@ import properties.db_table as TABLE
 import data_manager
 import db_controller
 import v_and_v as vv
-import md_changer
+import factory
 from logger import debug_logger, info_logger, warning_logger, error_logger
 
 def main():
@@ -99,7 +99,7 @@ def main():
 
                 # If file is valid, proceed with conversion
                 if valid == TYPE.NEW:
-                    completed = md_changer.convert_md_to_html(PATH.MARKDOWN, PATH.HTMLS, directory, store.title)
+                    completed = factory.process(PATH.MARKDOWN, PATH.HTMLS, directory, store.title)
                     if completed:
                         num = db_controller.select_file_max_num(TABLE.FILES, store.cover)
                         revision = db_controller.select_file_max_rev(TABLE.FILES, store.cover, store.title)
@@ -113,7 +113,7 @@ def main():
                         error_logger.error(f"Failed to convert {file} in {directory} to HTML")
                         continue
                 elif valid == TYPE.UPDATE:
-                    completed = md_changer.convert_md_to_html(PATH.MARKDOWN, PATH.HTMLS, directory, store.title)
+                    completed = factory.process(PATH.MARKDOWN, PATH.HTMLS, directory, store.title)
                     if completed:
                         num = db_controller.select_file_max_num(TABLE.FILES, store.cover)
                         revision = db_controller.select_file_max_rev(TABLE.FILES, store.cover, store.title)
@@ -142,6 +142,10 @@ def finish_off():
         warning_logger.warning("No valid directory found in the database")
         return
     else:
+        if(type(dir_db) == str):
+            temp = []
+            temp.append(dir_db)
+            dir_db = temp
         for directory in dir_db:
             if type(directory) == tuple:
                 directory = directory[0]

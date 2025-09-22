@@ -29,6 +29,10 @@ def it():
     try:
         dir_os = os.listdir(PATH.TEST_RESULT)
         debug_logger.debug(dir_os)
+        if(type(dir_os) == str):
+            temp = []
+            temp.append(dir_os)
+            dir_os = temp
         for dir in dir_os:
             os.rmdir(dir)
     except Exception as e:
