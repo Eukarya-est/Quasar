@@ -114,10 +114,10 @@ Jul.2025 -
             deactivate v_and_v
             end
             alt valid_id == Type.NEW
-                main->>md_changer: convert_md_to_html
-                activate md_changer
-                md_changer->>main: TYPE.SUCCESS
-                deactivate md_changer
+                main->>factory: process
+                activate factory
+                factory->>main: TYPE.SUCCESS
+                deactivate factory
                 main->>db_controller: select_file_max_num
                 activate db_controller
                 db_controller->>db_manager: select_query:select_F4
@@ -151,10 +151,20 @@ Jul.2025 -
                 db_controller->>main: result
                 deactivate db_controller
             else valid_id == Type.UPDATE
-                main->>md_changer: convert_md_to_html
-                activate md_changer
-                md_changer->>main: TYPE.SUCCESS
-                deactivate md_changer
+                main->>factory: process
+                activate factory
+                factory->>machine_controller:operate
+                activate machine_controller
+                machine_controller->>machine:extract
+                activate machine
+                machine->>machine_controller:result
+                machine_controller->>machine:label
+                machine->>machine_controller:result
+                deactivate machine
+                machine_controller->>factory:contents
+                deactivate machine_controller
+                factory->>main: TYPE.SUCCESS
+                deactivate factory
                 main->>db_controller: select_file_max_num
                 activate db_controller
                 db_controller->>db_manager: select_query:select_F4

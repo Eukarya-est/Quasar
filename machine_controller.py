@@ -5,10 +5,12 @@ import machine
 
 def operate(directory, contents):
 
-    # Convert Typora html to HTML
-    contents = machine.extract(contents)
-    contents = machine.manage_pre(contents)
-    contents = machine.label(directory, contents)
+    try:
+        # Convert Typora html to HTML
+        contents = machine.extract(contents)
+        contents = machine.label(directory, contents)
+    except Exception as e:
+        error_logger.error(f"Fail to operation; {e}")
 
     return contents
     
