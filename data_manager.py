@@ -67,7 +67,11 @@ def get_file_name(filename):
     return file_name
 
 def parse_path(path):
-    list = path.split('/')
-    file_name = list[len(list) - 1]
-    name = file_name.split('.')[0]
+    elements = path.split('/')
+    file_name = elements[-1]
+    name = None
+    if file_name.endswith('.md'):
+        name = file_name.removesuffix('.md')
+    elif file_name.endswith('.html'):
+        name = file_name.removesuffix('.html')
     return name
